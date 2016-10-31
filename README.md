@@ -37,10 +37,10 @@ In a terminal window, do the following:
 # For more verbose output
 export DEBUG=watsonwork-*
 
-# To get the code
+# Get the code
 git clone https://github.com/jsdelfino/watsonwork-greeter
 
-# To build the sample app
+# Build the app
 cd watsonwork-greeter
 npm run build
 ```
