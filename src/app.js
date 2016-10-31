@@ -91,8 +91,8 @@ const send = (spaceId, text, tok, cb) => {
 export const verify = (wsecret) => (req, res, buf, encoding) => {
   if(req.get('X-OUTBOUND-TOKEN') !==
     createHmac('sha256', wsecret).update(buf).digest('hex')) {
-    log('Invalid Webhook request signature');
-    const err = new Error();
+    log('Invalid request signature');
+    const err = new Error('Invalid request signature');
     err.status = 401;
     throw err;
   }

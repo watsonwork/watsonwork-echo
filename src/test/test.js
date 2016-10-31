@@ -200,7 +200,7 @@ describe('watsonwork-greeter', () => {
     });
   });
 
-  it('rejects messages with incorrect signature', (done) => {
+  it('rejects messages with invalid signature', (done) => {
 
     // Check async callbacks
     let checks = 0;
