@@ -1,5 +1,4 @@
-watsonwork-greeter
-===
+# watsonwork-greeter
 
 [![Build Status](https://travis-ci.org/jsdelfino/watsonwork-greeter.svg)](https://travis-ci.org/jsdelfino/watsonwork-greeter)
 
@@ -14,33 +13,29 @@ to the conversation.
 It also demonstrates how to authenticate an application and obtain the
 OAuth token needed to make Watson Work API calls.
 
-Try it out
----
+## Try it out
 
 To try the sample app do the following:
+
+### Register the app
 
 In your Web browser, go to [Watson Work Services - Apps]
 (https://workspace.ibm.com/developer/apps) and add a new app named
 **Greeter** with a Webhook configured for **message-created** events.
-
 Set the Webhook **Callback URL** to a public URL targeting the server where
 you're going to run the sample app, `https://<your server hostname>/greeter`
-for example.
-
-Write down the app id, app secret and Webhook secret for the new app.
+for example. Save the app and write down its app id, app secret and
+Webhook secret.
 
 **TODO** Describe how to use a secure tunnel from a public URL to a local
 development server.
+
+### Build the app
 
 Install Node.js 6+.
 
 In a terminal window, do the following:
 ```sh
-# Configure the app id and app secret you just got
-export GREETER_APP_ID=<the Greeter app id>
-export GREETER_APP_SECRET=<the Greeter app secret>
-export GREETER_WEBHOOK_SECRET=<the Greeter Webhook secret>
-
 # For more verbose output
 export DEBUG=watsonwork-*
 
@@ -52,12 +47,21 @@ cd watsonwork-greeter
 npm run build
 ```
 
-You're not ready to start the sample Greeter app.
+### Start the app
+
+You're now ready to start the sample Greeter app!
+
+In the terminal window, do the following:
+```
+# Configure the app id and app secret
+export GREETER_APP_ID=<the Greeter app id>
+export GREETER_APP_SECRET=<the Greeter app secret>
+export GREETER_WEBHOOK_SECRET=<the Greeter Webhook secret>
+```
 
 The Watson Work platform requires Webhook endpoints to use HTTPS. The
 sample app listens on HTTPS port 443 and can be configured to use an SSL
 certificate like follows:
-
 ```
 # Configure the SSL certificate
 export SSLCERT=<path to your SSL certificate in PEM format>
@@ -67,7 +71,7 @@ export SSLKEY=<path to your SSL certificate key in PEM format>
 npm start
 ```
 
-You can also use a different HTTPS port number and a self-signed certificate
+You can also use a different HTTPS port number and a self-signed certificate,
 like follows:
 ```
 # Configure the HTTPS port number
@@ -93,6 +97,8 @@ export PORT=8080
 npm start
 ```
 
+### Enable the app Webhook
+
 Now that the app is running and listening for HTTPS requests at a public URL,
 you're ready to *enable* its Webhook and add the app to a space.
 
@@ -106,6 +112,8 @@ in the terminal window:
 ```
 watsonwork-greeter-app Got Webhook verification challenge
 ```
+
+### Chat with the app in a space
 
 Go to [Watson Workspace](https://workspace.ibm.com) and create a space
 named **Examples**.
@@ -125,8 +133,7 @@ watsonwork-greeter-app Got a message { <message details here> }
 watsonwork-greeter-app Sent greeting message to space <space id>
 ```
 
-Layout
----
+## Layout
 
 The example source tree is organized as follows:
 
@@ -143,8 +150,7 @@ src/          - Javascript sources
   test/       - unit tests
 ```
 
-What API does the app use?
----
+## What API does the app use?
 
 The app uses the [Watson Work OAuth API]
 (https://workspace.ibm.com/developer/docs) to authenticate and get an
@@ -157,8 +163,7 @@ receive messages.
 Finally, it uses the [Watson Work Spaces API]
 (https://workspace.ibm.com/developer/docs) to send back greeting messages.
 
-How can I contribute?
---
+## How can I contribute?
 
 Pull requests welcome!
 
