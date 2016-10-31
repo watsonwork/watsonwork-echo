@@ -162,13 +162,13 @@ const main = (argv, env, cb) => {
       }
 
       else
-        // Listen on the configured HTTPS port, default to 8443
+        // Listen on the configured HTTPS port, default to 443
         ssl.conf(env, (err, conf) => {
           if(err) {
             cb(err);
             return;
           }
-          const port = env.SSLPORT || 8443;
+          const port = env.SSLPORT || 443;
           log('HTTPS server listening on port %d', port);
           https.createServer(conf, app).listen(port, cb);
         });
