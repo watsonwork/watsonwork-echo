@@ -8,10 +8,8 @@ greeting messages.
 The Watson Work platform provides **spaces** for people to exchange
 **messages** in conversations. This app shows how to listen to a conversation
 and receive messages on a Webhook endpoint, then send response messages back
-to the conversation.
-
-It also demonstrates how to authenticate an application and obtain the
-OAuth token needed to make Watson Work API calls.
+to the conversation. It also demonstrates how to authenticate an application
+and obtain the OAuth token needed to make Watson Work API calls.
 
 ## Try it out
 
@@ -100,14 +98,14 @@ npm start
 ### Enable the app Webhook
 
 Now that the app is running and listening for HTTPS requests at a public URL,
-you're ready to *enable* its Webhook and add the app to a space.
+you're ready to *enable* its Webhook on the Watson Work platform.
 
 In your Web browser, edit the **Greeter** app and set its Webhook to
-**Enabled**. The Watson Work platform will ping the Webhook callback URL
-with a verification challenge request to check that it's up and responding
+**Enabled**. Watson Work will ping the Webhook callback URL with a
+verification challenge request to check that it's up and responding
 correctly.
 
-The sample app will respond to that challenge request, and log the following
+The sample app will respond to that challenge request and log the following
 in the terminal window:
 ```
 watsonwork-greeter-app Got Webhook verification challenge
@@ -115,19 +113,17 @@ watsonwork-greeter-app Got Webhook verification challenge
 
 ### Chat with the app in a space
 
-Go to [Watson Workspace](https://workspace.ibm.com) and create a space
-named **Examples**.
-
-Open the **Apps** tab for that space and add the **Greeter** app to it.
-
 You're now ready to chat with the sample app!
 
-In the **Examples** space, say "*Hello there*".
+Go to [Watson Workspace](https://workspace.ibm.com) and create a space
+named **Examples**, then open the **Apps** tab for that space and add the
+**Greeter** app to it.
 
-The app will respond with a greeting message echoing what you just said:
-"*Hey [your name], did you say Hello there?*"
+In the **Examples** space, say "*Hello there*". The app will respond with a
+greeting message echoing what you just said: "*Hey [your name], did you say
+Hello there?*"
 
-The terminal window will also show the app log output:
+The terminal window will show the following log output:
 ```
 watsonwork-greeter-app Got a message { <message details here> }
 watsonwork-greeter-app Sent greeting message to space <space id>
@@ -154,14 +150,11 @@ src/          - Javascript sources
 
 The app uses the [Watson Work OAuth API]
 (https://workspace.ibm.com/developer/docs) to authenticate and get an
-OAuth token.
-
-It implements a Webhook endpoint according to the [Watson Work Webhook API]
-(https://workspace.ibm.com/developer/docs) to listen to conversations and
-receive messages.
-
-Finally, it uses the [Watson Work Spaces API]
-(https://workspace.ibm.com/developer/docs) to send back greeting messages.
+OAuth token. It implements a Webhook endpoint according to the
+[Watson Work Webhook API](https://workspace.ibm.com/developer/docs) to
+listen to conversations and receive messages. Finally, it uses the
+[Watson Work Spaces API] (https://workspace.ibm.com/developer/docs) to send
+back greeting messages.
 
 ## How can I contribute?
 
