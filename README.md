@@ -1,6 +1,6 @@
 # watsonwork-greeter
 
-[![Build Status](https://travis-ci.org/jsdelfino/watsonwork-greeter.svg)](https://travis-ci.org/jsdelfino/watsonwork-greeter)
+[![Build Status](https://travis-ci.org/watsonwork/watsonwork-greeter.svg)](https://travis-ci.org/watsonwork/watsonwork-greeter)
 
 A Node.js example chatbot app that listens to a conversation and responds with
 greeting messages.
