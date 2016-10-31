@@ -38,7 +38,7 @@ In a terminal window, do the following:
 export DEBUG=watsonwork-*
 
 # Get the code
-git clone https://github.com/jsdelfino/watsonwork-greeter
+git clone https://github.com/watsonwork/watsonwork-greeter
 
 # Build the app
 cd watsonwork-greeter

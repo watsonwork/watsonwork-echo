@@ -3,13 +3,13 @@
   "description": "A sample chatbot app that listens to a conversation and responds with greeting messages",
   "license": "Apache-2.0",
   "version": "0.0.1",
-  "homepage": "https://github.com/jsdelfino/watsonwork-greeter",
+  "homepage": "https://github.com/watsonwork/watsonwork-greeter",
   "bugs": {
-    "url": "https://github.com/jsdelfino/watsonwork-greeter"
+    "url": "https://github.com/watsonwork/watsonwork-greeter"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jsdelfino/watsonwork-greeter.git"
+    "url": "https://github.com/watsonwork/watsonwork-greeter.git"
   },
   "keywords": [
     "watson",
