@@ -15,20 +15,20 @@ and obtain the OAuth token needed to make Watson Work API calls.
 
 To try the sample app do the following:
 
-### Register the app
+### Deploying the app to IBM Bluemix
 
-In your Web browser, go to [Watson Work Services - Apps]
-(https://workspace.ibm.com/developer/apps) and add a new app named
-**Greeter** with a Webhook configured for **message-created** events.
-Set the Webhook **Callback URL** to a public URL targeting the server where
-you're going to run the sample app, `https://<your server hostname>/greeter`
-for example. Save the app and write down its app id, app secret and
-Webhook secret.
+If you have a [Bluemix](https://bluemix.net)  account and want to give the
+sample app a quick try, you can simply get it deployed to Bluemix straight
+from Github without even having to download it to your local development
+environment and build it yourself.
 
-**TODO** Describe how to use a secure tunnel from a public URL to a local
-development server.
+[![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/watsonwork/watsonwork-greeter&branch=master)
 
-### Build the app
+### Building the app locally
+
+You can skip this if you've just deployed the app directly to Bluemix.
+
+To build the app in your local development environment, follow these steps:
 
 Install Node.js 6+.
 
@@ -45,9 +45,36 @@ cd watsonwork-greeter
 npm run build
 ```
 
-### Start the app
+### Registering the app with Watson Work
 
-You're now ready to start the sample Greeter app!
+In your Web browser, go to [Watson Work Services - Apps]
+(https://workspace.ibm.com/developer/apps) and add a new app named
+**Greeter** with a Webhook configured for **message-created** events.
+
+Set the Webhook **Callback URL** to a public URL targeting the server where
+you're going to run the sample app, `https://<your server hostname>/greeter`
+for example, or `https://<bluemix app name>.mybluemix.net/greeter` if you've
+deployed it to Bluemix.
+
+Save the app and write down its app id, app secret and Webhook secret.
+
+### Starting the app on Bluemix
+
+Go to [Bluemix](https://console.ng.bluemix.net/dashboard/applications),
+select your app and under **Runtime** / **Environment Variables** /
+**User Defined**, add the following variables:
+
+```
+GREETER_APP_ID: <the Greeter app id>                                      
+GREETER_APP_SECRET: <the Greeter app secret>                              
+GREETER_WEBHOOK_SECRET: <the Greeter Webhook secret>
+```
+
+Click the **>** *Start* button to start the app.
+
+### Starting the app locally
+
+You can skip this if you've just started the app on Bluemix.
 
 In the terminal window, do the following:
 ```
@@ -68,6 +95,9 @@ export SSLKEY=<path to your SSL certificate key in PEM format>
 # Start the app
 npm start
 ```
+
+**TODO** Describe how to use a secure tunnel from a public URL to a local
+development server.
 
 You can also use a different HTTPS port number and a self-signed certificate,
 like follows:
@@ -95,23 +125,23 @@ export PORT=8080
 npm start
 ```
 
-### Enable the app Webhook
+### Enabling the app Webhook
 
 Now that the app is running and listening for HTTPS requests at a public URL,
-you're ready to *enable* its Webhook on the Watson Work platform.
+you're ready to **enable** its Webhook on the Watson Work platform.
 
 In your Web browser, edit the **Greeter** app and set its Webhook to
 **Enabled**. Watson Work will ping the Webhook callback URL with a
 verification challenge request to check that it's up and responding
 correctly.
 
-The sample app will respond to that challenge request and log the following
-in the terminal window:
+The sample app will respond to that challenge request and output the
+following log:
 ```
 watsonwork-greeter-app Got Webhook verification challenge
 ```
 
-### Chat with the app in a space
+### Chatting with the app in a space
 
 You're now ready to chat with the sample app!
 
@@ -123,13 +153,13 @@ In the **Examples** space, say "*Hello there*". The app will respond with a
 greeting message echoing what you just said: "*Hey [your name], did you say
 Hello there?*"
 
-The terminal window will show the following log output:
+The application will also output the following log:
 ```
 watsonwork-greeter-app Got a message { <message details here> }
 watsonwork-greeter-app Sent greeting message to space <space id>
 ```
 
-## Layout
+## Project layout
 
 The example source tree is organized as follows:
 

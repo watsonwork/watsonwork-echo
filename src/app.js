@@ -117,8 +117,10 @@ export const challenge = (wsecret) => (req, res, next) => {
 export const webapp = (appId, secret, wsecret, cb) => {
   // Authenticate the app and get an OAuth token
   oauth.run(appId, secret, (err, token) => {
-    if(err)
-      log('App won\'t be able to send messages without a token');
+    if(err) {
+      cb(err);
+      return;
+    }
 
     // Return the Express Web app
     cb(null, express()

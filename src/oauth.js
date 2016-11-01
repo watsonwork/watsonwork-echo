@@ -35,7 +35,7 @@ export const run = (appId, secret, cb) => {
     }, (err, res) => {
       if(err || res.statusCode !== 200) {
         log('Error getting token %o', err || res.statusCode);
-        cb(err || new Error(res.statusCode), current);
+        cb(err || new Error(res.statusCode));
         return;
       }
 
