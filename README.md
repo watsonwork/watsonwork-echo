@@ -20,11 +20,9 @@ To try the sample app do the following:
 If you have a [Bluemix](https://bluemix.net)  account and want to give the
 sample app a quick try, you can simply get it deployed to Bluemix straight
 from Github without even having to download it to your local development
-environment and build it yourself.
+environment and build it yourself. To do this click the button below:
 
-Just click
 [![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/watsonwork/watsonwork-greeter&branch=master)
-and let Bluemix do the app build and deployment for you.
 
 Once that's done, go to your
 [Bluemix Dashboard](https://console.ng.bluemix.net/dashboard/cf-apps). The
