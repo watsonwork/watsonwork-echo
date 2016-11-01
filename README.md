@@ -105,9 +105,6 @@ export SSLKEY=<path to your SSL certificate key in PEM format>
 npm start
 ```
 
-**TODO** Describe how to use a secure tunnel from a public URL to a local
-development server.
-
 You can also use a different HTTPS port number and a self-signed certificate,
 like follows:
 ```
@@ -134,12 +131,42 @@ export PORT=8080
 npm start
 ```
 
+Finally, if the app is running on your development machine and you don't
+want to set up a public IP and domain name yourself for it, you can also
+use one the tunnel tools popular for Webhook development like
+[localtunnel](https://localtunnel.github.io/www/) or
+[ngrok](https://ngrok.com) for example.
+
+Here's how to do it with localtunnel:
+
+```
+# Install the localtunnel module
+npm install -g localtunnel
+
+# Set up a tunnel from https://<subdomain name>.localtunnel.me
+# to localhost:8080
+lt --subdomain <pick a subdomain name> --port 8080
+
+# Configure the app HTTP port
+# No need for HTTPS here as localtunnel handles it
+export PORT=8080
+
+# Start the app
+npm start
+```
+
+Once the tunnel is set up and the app is running, you can now go back to
+[Watson Work Services / Apps](https://workspace.ibm.com/developer/apps),  
+edit the **Greeter** app and set its Webhook **Callback URL** to
+`https://<subdomain name>.localtunnel.me.
+
 ### Enabling the app Webhook
 
 Now that the app is running and listening for HTTPS requests at a public URL,
 you're ready to **enable** its Webhook on the Watson Work platform.
 
-Go to [Watson Work Services / Apps](https://workspace.ibm.com/developer/apps),
+Go back to
+[Watson Work Services / Apps](https://workspace.ibm.com/developer/apps),
 edit the **Greeter** app and set its Webhook to **Enabled**. Watson Work will
 ping the app Webhook callback URL with a verification challenge request to
 check that it's up and responding correctly.
