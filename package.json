@@ -1,6 +1,6 @@
 {
   "name": "watsonwork-greeter",
-  "description": "A sample chatbot app that listens to a conversation and responds with greeting messages",
+  "description": "A sample chatbot app that listens to messages posted to a space in IBM Watson Workspace and responds with greeting messages",
   "license": "Apache-2.0",
   "version": "0.0.1",
   "homepage": "https://github.com/watsonwork/watsonwork-greeter",

@@ -1,5 +1,5 @@
-// A sample chatbot app that listens to a conversation and responds with
-// greeting messages
+// A sample chatbot app that listens to messages posted to a space in IBM
+// Watson Workspace and responds with greeting messages
 
 import express from 'express';
 import * as request from 'request';

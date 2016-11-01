@@ -2,8 +2,8 @@
 
 [![Build Status](https://travis-ci.org/watsonwork/watsonwork-greeter.svg)](https://travis-ci.org/watsonwork/watsonwork-greeter)
 
-A Node.js example chatbot app that listens to a conversation and responds with
-greeting messages.
+A Node.js sample chatbot app that listens to messages posted to a space
+in IBM Watson Workspace and responds with greeting messages.
 
 The Watson Work platform provides **spaces** for people to exchange
 **messages** in conversations. This app shows how to listen to a conversation
@@ -77,6 +77,7 @@ select your app and under **Runtime** / **Environment Variables** /
 GREETER_APP_ID: <the Greeter app id>                                      
 GREETER_APP_SECRET: <the Greeter app secret>                              
 GREETER_WEBHOOK_SECRET: <the Greeter Webhook secret>
+DEBUG: watsonwork-*
 ```
 
 Click the **> Start** button to start the app.
@@ -132,12 +133,12 @@ npm start
 ```
 
 Finally, if the app is running on your development machine and you don't
-want to set up a public IP and domain name yourself for it, you can also
+want to set up a public IP and domain name for it yourself, you can also
 use one the tunnel tools popular for Webhook development like
 [localtunnel](https://localtunnel.github.io/www/) or
 [ngrok](https://ngrok.com) for example.
 
-Here's how to do it with localtunnel:
+Here's how to use a tunnel with localtunnel:
 
 ```
 # Install the localtunnel module
@@ -155,10 +156,10 @@ export PORT=8080
 npm start
 ```
 
-Once the tunnel is set up and the app is running, you can now go back to
+You can now go back to
 [Watson Work Services / Apps](https://workspace.ibm.com/developer/apps),  
 edit the **Greeter** app and set its Webhook **Callback URL** to
-`https://<subdomain name>.localtunnel.me.
+`https://<subdomain name>.localtunnel.me/greeter`.
 
 ### Enabling the app Webhook
 
@@ -198,7 +199,7 @@ watsonwork-greeter-app Sent greeting message to space <space id>
 
 ## Project layout
 
-The example source tree is organized as follows:
+The sample project source tree is organized as follows:
 
 ```sh
 README.md     - this README
