@@ -22,9 +22,11 @@ sample app a quick try, you can simply get it deployed to Bluemix straight
 from Github without even having to download it to your local development
 environment and build it yourself.
 
+Just click
 [![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/watsonwork/watsonwork-greeter&branch=master)
+and let Bluemix do the app build and deployment for you.
 
-Go to your
+Once that's done, go to your
 [Bluemix Dashboard](https://console.ng.bluemix.net/dashboard/cf-apps). The
 app you've just deployed should be listed on that page. Write down its
 **route** public URL (usually `https://<bluemix app name>.mybluemix.net`)
