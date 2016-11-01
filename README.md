@@ -5,7 +5,7 @@
 A Node.js example chatbot app that listens to a conversation and responds with
 greeting messages.
 
-The Watson Work platform provides **spaces** for people to exchange
+The Watson Work Services platform provides **spaces** for people to exchange
 **messages** in conversations. This app shows how to listen to a conversation
 and receive messages on a Webhook endpoint, then send response messages back
 to the conversation. It also demonstrates how to authenticate an application
@@ -23,6 +23,13 @@ from Github without even having to download it to your local development
 environment and build it yourself.
 
 [![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/watsonwork/watsonwork-greeter&branch=master)
+
+Go to your
+[Bluemix Dashboard](https://console.ng.bluemix.net/dashboard/cf-apps). The
+app you've just deployed should be listed on that page. Write down its
+**route** public URL (usually `https://<bluemix app name>.mybluemix.net`)
+as you will need it later to register the app's Webhook endpoint with
+the Watson Work Services platform.
 
 ### Building the app locally
 
@@ -45,9 +52,9 @@ cd watsonwork-greeter
 npm run build
 ```
 
-### Registering the app with Watson Work
+### Registering the app with Watson Work Services
 
-In your Web browser, go to [Watson Work Services - Apps]
+In your Web browser, go to [Watson Work Services / Apps]
 (https://workspace.ibm.com/developer/apps) and add a new app named
 **Greeter** with a Webhook configured for **message-created** events.
 
@@ -60,7 +67,8 @@ Save the app and write down its app id, app secret and Webhook secret.
 
 ### Starting the app on Bluemix
 
-Go to [Bluemix](https://console.ng.bluemix.net/dashboard/applications),
+Go to your
+[Bluemix Dashboard](https://console.ng.bluemix.net/dashboard/cf-apps),
 select your app and under **Runtime** / **Environment Variables** /
 **User Defined**, add the following variables:
 
@@ -70,7 +78,7 @@ GREETER_APP_SECRET: <the Greeter app secret>
 GREETER_WEBHOOK_SECRET: <the Greeter Webhook secret>
 ```
 
-Click the **>** *Start* button to start the app.
+Click the **> Start** button to start the app.
 
 ### Starting the app locally
 
@@ -84,7 +92,7 @@ export GREETER_APP_SECRET=<the Greeter app secret>
 export GREETER_WEBHOOK_SECRET=<the Greeter Webhook secret>
 ```
 
-The Watson Work platform requires Webhook endpoints to use HTTPS. The
+The Watson Work Services platform requires Webhook endpoints to use HTTPS. The
 sample app listens on HTTPS port 443 and can be configured to use an SSL
 certificate like follows:
 ```
@@ -128,12 +136,12 @@ npm start
 ### Enabling the app Webhook
 
 Now that the app is running and listening for HTTPS requests at a public URL,
-you're ready to **enable** its Webhook on the Watson Work platform.
+you're ready to **enable** its Webhook on the Watson Work Services platform.
 
-In your Web browser, edit the **Greeter** app and set its Webhook to
-**Enabled**. Watson Work will ping the Webhook callback URL with a
-verification challenge request to check that it's up and responding
-correctly.
+Go to [Watson Work Services / Apps](https://workspace.ibm.com/developer/apps),
+edit the **Greeter** app and set its Webhook to **Enabled**. Watson Work will
+ping the app Webhook callback URL with a verification challenge request to
+check that it's up and responding correctly.
 
 The sample app will respond to that challenge request and output the
 following log:
