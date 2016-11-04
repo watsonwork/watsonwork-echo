@@ -1,9 +1,9 @@
-# watsonwork-greeter
+# watsonwork-echo
 
-[![Build Status](https://travis-ci.org/watsonwork/watsonwork-greeter.svg)](https://travis-ci.org/watsonwork/watsonwork-greeter)
+[![Build Status](https://travis-ci.org/watsonwork/watsonwork-echo.svg)](https://travis-ci.org/watsonwork/watsonwork-echo)
 
 A Node.js sample chatbot app that listens to messages posted to a space
-in IBM Watson Workspace and responds with greeting messages.
+in IBM Watson Workspace and echoes 'hello' messages back to the space.
 
 The Watson Work platform provides **spaces** for people to exchange
 **messages** in conversations. This app shows how to listen to a conversation
@@ -22,7 +22,7 @@ sample app a quick try, you can simply get it deployed to Bluemix straight
 from Github without even having to download it to your local development
 environment and build it yourself. Just click the button below:
 
-[![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/watsonwork/watsonwork-greeter&branch=master)
+[![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/watsonwork/watsonwork-echo&branch=master)
 
 Once that's done, go to your
 [Bluemix Dashboard](https://console.ng.bluemix.net/dashboard/cf-apps). The
@@ -45,10 +45,10 @@ In a terminal window, do the following:
 export DEBUG=watsonwork-*
 
 # Get the code
-git clone https://github.com/watsonwork/watsonwork-greeter
+git clone https://github.com/watsonwork/watsonwork-echo
 
 # Build the app
-cd watsonwork-greeter
+cd watsonwork-echo
 npm run build
 ```
 
@@ -56,12 +56,12 @@ npm run build
 
 In your Web browser, go to [Watson Work Services / Apps]
 (https://workspace.ibm.com/developer/apps) and add a new app named
-**Greeter** with a Webhook configured for **message-created** events.
+**Echo** with a Webhook configured for **message-created** events.
 
 Set the Webhook **Callback URL** to a public URL targeting the server where
 you're planning to run the sample app,
-`https://<your server hostname>/greeter` for example, or
-`https://<bluemix app name>.mybluemix.net/greeter` if you've deployed it
+`https://<your server hostname>/echo` for example, or
+`https://<bluemix app name>.mybluemix.net/echo` if you've deployed it
 to Bluemix.
 
 Save the app and write down its app id, app secret and Webhook secret.
@@ -74,9 +74,9 @@ select your app and under **Runtime** / **Environment Variables** /
 **User Defined**, add the following variables:
 
 ```
-GREETER_APP_ID: <the Greeter app id>                                      
-GREETER_APP_SECRET: <the Greeter app secret>                              
-GREETER_WEBHOOK_SECRET: <the Greeter Webhook secret>
+ECHO_APP_ID: <the Echo app id>                                      
+ECHO_APP_SECRET: <the Echo app secret>                              
+ECHO_WEBHOOK_SECRET: <the Echo Webhook secret>
 DEBUG: watsonwork-*
 ```
 
@@ -89,9 +89,9 @@ You can skip this if you've just started the app on Bluemix.
 In the terminal window, do the following:
 ```
 # Configure the app id and app secret
-export GREETER_APP_ID=<the Greeter app id>
-export GREETER_APP_SECRET=<the Greeter app secret>
-export GREETER_WEBHOOK_SECRET=<the Greeter Webhook secret>
+export ECHO_APP_ID=<the Echo app id>
+export ECHO_APP_SECRET=<the Echo app secret>
+export ECHO_WEBHOOK_SECRET=<the Echo Webhook secret>
 ```
 
 The Watson Work platform requires Webhook endpoints to use HTTPS. The
@@ -158,8 +158,8 @@ npm start
 
 You can now go back to
 [Watson Work Services / Apps](https://workspace.ibm.com/developer/apps),  
-edit the **Greeter** app and set its Webhook **Callback URL** to
-`https://<subdomain name>.localtunnel.me/greeter`.
+edit the **Echo** app and set its Webhook **Callback URL** to
+`https://<subdomain name>.localtunnel.me/echo`.
 
 ### Enabling the app Webhook
 
@@ -168,14 +168,14 @@ you're ready to **enable** its Webhook on the Watson Work platform.
 
 Go back to
 [Watson Work Services / Apps](https://workspace.ibm.com/developer/apps),
-edit the **Greeter** app and set its Webhook to **Enabled**. Watson Work will
+edit the **Echo** app and set its Webhook to **Enabled**. Watson Work will
 ping the app Webhook callback URL with a verification challenge request to
 check that it's up and responding correctly.
 
 The sample app will respond to that challenge request and output the
 following log:
 ```
-watsonwork-greeter-app Got Webhook verification challenge
+watsonwork-echo-app Got Webhook verification challenge
 ```
 
 ### Chatting with the app in a space
@@ -184,17 +184,17 @@ You're now ready to chat with the sample app!
 
 Go to [Watson Workspace](https://workspace.ibm.com) and create a space
 named **Examples**, then open the **Apps** tab for that space and add the
-**Greeter** app to it.
+**Echo** app to it.
 
 In the **Examples** space, say "*Hello there*".
 
-The app will respond with a greeting message echoing what you just said:
+The app will respond with a message echoing what you just said:
 "*Hey [your name], did you say Hello there?*"
 
 The application will also output the following log:
 ```
-watsonwork-greeter-app Got a message { <message details here> }
-watsonwork-greeter-app Sent greeting message to space <space id>
+watsonwork-echo-app Got a message { <message details here> }
+watsonwork-echo-app Sent message to space <space id>
 ```
 
 ## Project layout
@@ -220,9 +220,9 @@ The app uses the [Watson Work OAuth API]
 (https://workspace.ibm.com/developer/docs) to authenticate and get an
 OAuth token. It implements a Webhook endpoint according to the
 [Watson Work Webhook API](https://workspace.ibm.com/developer/docs) to
-listen to conversations and receive messages. Finally, it uses the
-[Watson Work Spaces API] (https://workspace.ibm.com/developer/docs) to send
-back greeting messages.
+listen to conversations in a space and receive messages. Finally, it uses
+the [Watson Work Spaces API] (https://workspace.ibm.com/developer/docs) to
+send back echo messages to the space.
 
 ## How can I contribute?
 

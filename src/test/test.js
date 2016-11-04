@@ -1,5 +1,5 @@
 // A sample chatbot app that listens to messages posted to a space in IBM
-// Watson Workspace and responds with greeting messages
+// Watson Workspace and echoes hello messages back to the space
 
 // Test the happy path
 
@@ -13,13 +13,13 @@ require.cache[require.resolve('request')].exports = {
   post: (uri, opt, cb) => postspy(uri, opt, cb)
 };
 
-// Load the greeter app
-const greeter = require('../app');
+// Load the Echo app
+const echo = require('../app');
 
 // Generate a test OAuth token
 const token = jsonwebtoken.sign({}, 'secret', { expiresIn: '1h' });
 
-describe('watsonwork-greeter', () => {
+describe('watsonwork-echo', () => {
 
   // Mock the Watson Work OAuth service
   const oauth = (uri, opt, cb) => {
@@ -59,8 +59,8 @@ describe('watsonwork-greeter', () => {
       }
     };
 
-    // Create the greeter Web app
-    greeter.webapp('testappid', 'testsecret', 'testwsecret', (err, app) => {
+    // Create the Echo Web app
+    echo.webapp('testappid', 'testsecret', 'testwsecret', (err, app) => {
       expect(err).to.equal(null);
       check();
     });
@@ -84,15 +84,15 @@ describe('watsonwork-greeter', () => {
       }
     };
 
-    // Create the greeter Web app
-    greeter.webapp('testappid', 'testsecret', 'testwsecret', (err, app) => {
+    // Create the Echo Web app
+    echo.webapp('testappid', 'testsecret', 'testwsecret', (err, app) => {
       expect(err).to.equal(null);
 
       // Listen on an ephemeral port
       const server = app.listen(0);
 
       // Post a Webhook challenge request to the app
-      post('http://localhost:' + server.address().port + '/greeter', {
+      post('http://localhost:' + server.address().port + '/echo', {
         headers: {
           // Signature of the test body with the Webhook secret
           'X-OUTBOUND-TOKEN':
@@ -118,7 +118,7 @@ describe('watsonwork-greeter', () => {
     });
   });
 
-  it('responds with greeting messages', (done) => {
+  it('Echoes messages back', (done) => {
 
     // Check async callbacks
     let checks = 0;
@@ -135,7 +135,7 @@ describe('watsonwork-greeter', () => {
         return;
       }
 
-      // Expect a call to send a greeting message to the test space
+      // Expect a call to send echoed message to the test space
       if(uri ===
         'https://api.watsonwork.ibm.com/v1/spaces/testspace/messages') {
         expect(opt.headers).to.deep.equal({
@@ -150,13 +150,13 @@ describe('watsonwork-greeter', () => {
             version: 1.0,
 
             color: '#6CB7FB',
-            title: 'Sample message',
+            title: 'Echo message',
             text: 'Hey Jane, did you say Hello there?',
 
             actor: {
-              name: 'Sample app',
+              name: 'from sample echo app',
               avatar: 'https://avatars1.githubusercontent.com/u/22985179',
-              url: 'https://github.com/watsonwork'
+              url: 'https://github.com/watsonwork/watsonwork-echo'
             }
           }]
         });
@@ -170,15 +170,15 @@ describe('watsonwork-greeter', () => {
       }
     };
 
-    // Create the greeter Web app
-    greeter.webapp('testappid', 'testsecret', 'testwsecret', (err, app) => {
+    // Create the Echo Web app
+    echo.webapp('testappid', 'testsecret', 'testwsecret', (err, app) => {
       expect(err).to.equal(null);
 
       // Listen on an ephemeral port
       const server = app.listen(0);
 
       // Post a chat message to the app
-      post('http://localhost:' + server.address().port + '/greeter', {
+      post('http://localhost:' + server.address().port + '/echo', {
         headers: {
           'X-OUTBOUND-TOKEN':
             // Signature of the body with the Webhook secret
@@ -218,15 +218,15 @@ describe('watsonwork-greeter', () => {
       }
     };
 
-    // Create the greeter Web app
-    greeter.webapp('testappid', 'testsecret', 'testwsecret', (err, app) => {
+    // Create the Echo Web app
+    echo.webapp('testappid', 'testsecret', 'testwsecret', (err, app) => {
       expect(err).to.equal(null);
 
       // Listen on an ephemeral port
       const server = app.listen(0);
 
       // Post a chat message to the app
-      post('http://localhost:' + server.address().port + '/greeter', {
+      post('http://localhost:' + server.address().port + '/echo', {
         headers: {
           'X-OUTBOUND-TOKEN':
             // Test an invalid body signature

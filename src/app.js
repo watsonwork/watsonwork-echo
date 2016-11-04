@@ -1,5 +1,5 @@
 // A sample chatbot app that listens to messages posted to a space in IBM
-// Watson Workspace and responds with greeting messages
+// Watson Workspace and echoes hello messages back to the space
 
 import express from 'express';
 import * as request from 'request';
@@ -13,10 +13,11 @@ import * as ssl from './ssl';
 import debug from 'debug';
 
 // Debug log
-const log = debug('watsonwork-greeter-app');
+const log = debug('watsonwork-echo-app');
 
-// Respond to Watson Work chat messages with greeting messages
-export const greeter = (appId, token) => (req, res) => {
+// Echoes Watson Work chat messages containing 'hello' or 'hey' back
+// to the space they were sent to
+export const echo = (appId, token) => (req, res) => {
   // Respond to the Webhook right away, as the response message will
   // be sent asynchronously
   res.status(201).end();
@@ -28,7 +29,7 @@ export const greeter = (appId, token) => (req, res) => {
 
   log('Got a message %o', req.body);
 
-  // React to 'hello' or 'hey' keywords in the message and send a greeting
+  // React to 'hello' or 'hey' keywords in the message and send an echo
   // message back to the conversation in the originating space
   if(req.body.content
     // Tokenize the message text into individual words
@@ -36,7 +37,7 @@ export const greeter = (appId, token) => (req, res) => {
     // Look for the hello and hey words
     .filter((word) => /^(hello|hey)$/i.test(word)).length)
 
-    // Send the greeting message
+    // Send the echo message
     send(req.body.spaceId,
       util.format(
         'Hey %s, did you say %s?',
@@ -44,7 +45,7 @@ export const greeter = (appId, token) => (req, res) => {
       token(),
       (err, res) => {
         if(!err)
-          log('Sent greeting message to space %s', req.body.spaceId);
+          log('Sent message to space %s', req.body.spaceId);
       });
 };
 
@@ -66,13 +67,13 @@ const send = (spaceId, text, tok, cb) => {
           version: 1.0,
 
           color: '#6CB7FB',
-          title: 'Sample message',
+          title: 'Echo message',
           text: text,
 
           actor: {
-            name: 'Sample app',
+            name: 'from sample echo app',
             avatar: 'https://avatars1.githubusercontent.com/u/22985179',
-            url: 'https://github.com/watsonwork'
+            url: 'https://github.com/watsonwork/watsonwork-echo'
           }
         }]
       }
@@ -126,7 +127,7 @@ export const webapp = (appId, secret, wsecret, cb) => {
     cb(null, express()
 
       // Configure Express route for the app Webhook
-      .post('/greeter',
+      .post('/echo',
 
         // Verify Watson Work request signature and parse request body
         bparser.json({
@@ -138,7 +139,7 @@ export const webapp = (appId, secret, wsecret, cb) => {
         challenge(wsecret),
 
         // Handle Watson Work messages
-        greeter(appId, token)));
+        echo(appId, token)));
   });
 };
 
@@ -146,8 +147,8 @@ export const webapp = (appId, secret, wsecret, cb) => {
 const main = (argv, env, cb) => {
   // Create Express Web app
   webapp(
-    env.GREETER_APP_ID, env.GREETER_APP_SECRET,
-    env.GREETER_WEBHOOK_SECRET, (err, app) => {
+    env.ECHO_APP_ID, env.ECHO_APP_SECRET,
+    env.ECHO_WEBHOOK_SECRET, (err, app) => {
       if(err) {
         cb(err);
         return;

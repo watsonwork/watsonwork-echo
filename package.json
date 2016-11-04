@@ -1,21 +1,21 @@
 {
-  "name": "watsonwork-greeter",
-  "description": "A sample chatbot app that listens to messages posted to a space in IBM Watson Workspace and responds with greeting messages",
+  "name": "watsonwork-echo",
+  "description": "A sample chatbot app that listens to messages posted to a space in IBM Watson Workspace and echoes 'hello' messages back to the space",
   "license": "Apache-2.0",
   "version": "0.0.1",
-  "homepage": "https://github.com/watsonwork/watsonwork-greeter",
+  "homepage": "https://github.com/watsonwork/watsonwork-echo",
   "bugs": {
-    "url": "https://github.com/watsonwork/watsonwork-greeter"
+    "url": "https://github.com/watsonwork/watsonwork-echo"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/watsonwork/watsonwork-greeter.git"
+    "url": "https://github.com/watsonwork/watsonwork-echo.git"
   },
   "keywords": [
     "watson",
     "work",
     "sample",
-    "greeter"
+    "echo"
   ],
   "files": [
     ".npmrc",
@@ -24,7 +24,7 @@
   ],
   "main": "lib/app.js",
   "bin": {
-    "greeter": "lib/app.js"
+    "echo": "lib/app.js"
   },
   "scripts": {
     "start": "node lib/app.js",

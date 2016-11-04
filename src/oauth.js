@@ -5,7 +5,7 @@ import * as jsonwebtoken from 'jsonwebtoken';
 import debug from 'debug';
 
 // Setup debug log
-const log = debug('watsonwork-greeter-oauth');
+const log = debug('watsonwork-echo-oauth');
 
 // Obtain an OAuth token for the app, repeat at regular intervals before the
 // token expires. Returns a function that will always return a current

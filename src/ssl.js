@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import debug from 'debug';
 
 // Debug log
-const log = debug('watsonwork-greeter-ssl');
+const log = debug('watsonwork-echo-ssl');
 
 // Return HTTPS server SSL configuration
 export const conf = (env, cb) => {
