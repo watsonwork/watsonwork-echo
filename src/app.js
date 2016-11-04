@@ -130,7 +130,7 @@ export const webapp = (appId, secret, wsecret, cb) => {
 
         // Verify Watson Work request signature and parse request body
         bparser.json({
-          type: 'application/json',
+          type: '*/*',
           verify: verify(wsecret)
         }),
 
