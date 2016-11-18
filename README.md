@@ -112,8 +112,9 @@ like follows:
 # Configure the HTTPS port number
 export SSLPORT=8443
 
-# Generate and use a self-signed SSL certificate
-openssl req -nodes -new -x509 -keyout server.key -out server.crt -subj "/CN=localhost"
+# Generate a self-signed SSL certificate with /CN set to your server's
+# FQDN (fully qualified domain name), www.yourcompany.com for example
+openssl req -nodes -new -x509 -keyout server.key -out server.crt -subj "/CN=your server's FQDN"
 export SSLCERT=server.crt
 export SSLKEY=server.key
 
