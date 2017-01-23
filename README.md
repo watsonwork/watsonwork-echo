@@ -82,6 +82,22 @@ DEBUG: watsonwork-*
 
 Click the **> Start** button to start the app.
 
+### Launching the app from the Bluemix DevOps Services IDE
+
+If you've followed the above steps to deploy the app to Bluemix, it is now
+also set up as a project in the [Bluemix DevOps Services](https://hub.jazz.net)
+Web IDE, allowing you to edit and manage the app directly from within that IDE.
+
+You can skip this step if you're not planning to use that Web IDE.
+
+To enable the app to be launched directly from the Web IDE, edit its
+[https://hub.jazz.net/tutorials/livesync/#launch_configuration](Launch Configuration)
+and under **Manifest Settings**, set the launch **Command** to:
+
+```
+npm install babel-cli@6.10.1 && npm run babel && npm start
+```
+
 ### Starting the app locally
 
 You can skip this if you've just started the app on Bluemix.
