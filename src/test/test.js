@@ -154,7 +154,7 @@ describe('watsonwork-echo', () => {
             text: 'Hey Jane, did you say Hello there?',
 
             actor: {
-              name: 'from sample echo app'
+              name: 'Sample echo app'
             }
           }]
         });

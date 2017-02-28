@@ -71,7 +71,7 @@ const send = (spaceId, text, tok, cb) => {
           text: text,
 
           actor: {
-            name: 'from sample echo app'
+            name: 'Sample echo app'
           }
         }]
       }
