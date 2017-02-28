@@ -71,9 +71,7 @@ const send = (spaceId, text, tok, cb) => {
           text: text,
 
           actor: {
-            name: 'from sample echo app',
-            avatar: 'https://avatars1.githubusercontent.com/u/22985179',
-            url: 'https://github.com/watsonwork/watsonwork-echo'
+            name: 'from sample echo app'
           }
         }]
       }

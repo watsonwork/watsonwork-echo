@@ -154,9 +154,7 @@ describe('watsonwork-echo', () => {
             text: 'Hey Jane, did you say Hello there?',
 
             actor: {
-              name: 'from sample echo app',
-              avatar: 'https://avatars1.githubusercontent.com/u/22985179',
-              url: 'https://github.com/watsonwork/watsonwork-echo'
+              name: 'from sample echo app'
             }
           }]
         });
