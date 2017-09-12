@@ -4,31 +4,30 @@
 
 import * as fs from 'fs';
 import debug from 'debug';
-
+import Promise from 'bluebird';
 // Debug log
 const log = debug('watsonwork-echo-ssl');
 
-// Return HTTPS server SSL configuration
-export const conf = (env, cb) => {
-  // Read configured SSL cert and key
-  log('Reading SSL cert');
-  fs.readFile(env.SSLCERT || './server.crt', (err, cert) => {
-    if(err) {
-      log('Error reading SSL cert %o', err);
-      cb(err);
-      return;
-    }
-    fs.readFile(env.SSLKEY || './server.key', (err, key) => {
-      if(err) {
-        log('Error reading SSL key %o', err);
-        cb(err);
-        return;
-      }
-      cb(null, {
-        cert: cert,
-        key: key
-      });
-    });
-  });
-};
 
+// Promisify filesystem readfile for readablility
+const readFile = Promise.promisify(fs.readFile); 
+
+// Return HTTPS server SSL configuration
+export const conf = async (env) => {
+  
+  // Try reading the cert and key
+  try {
+    const cert = await readFile(env.SSLCERT || './server.cert');
+    const key = await readFile(env.SSLKEY, './server.key');
+    return {
+      cert: cert,
+      key: key
+    }; 
+  } 
+  catch(err) {
+    log('Error reading SSL cert or key %o', err);
+    throw err;
+  }
+  // the ssl certificate was not successfully created
+  return new Error('Unable to create SSL configuration');
+};

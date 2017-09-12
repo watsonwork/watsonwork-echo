@@ -6,8 +6,13 @@
 import { expect } from 'chai';
 import * as jsonwebtoken from 'jsonwebtoken';
 import { post } from 'request';
+import Promise from 'bluebird';
+
+// Promisify Request.post BEFORE overwrite
+const postAsync = Promise.promisify(post);
 
 // Rudimentary mock of the request module
+// This overwrites Request.post
 let postspy;
 require.cache[require.resolve('request')].exports = {
   post: (uri, opt, cb) => postspy(uri, opt, cb)
@@ -18,7 +23,6 @@ const echo = require('../app');
 
 // Generate a test OAuth token
 const token = jsonwebtoken.sign({}, 'secret', { expiresIn: '1h' });
-
 describe('watsonwork-echo', () => {
 
   // Mock the Watson Work OAuth service
@@ -41,97 +45,84 @@ describe('watsonwork-echo', () => {
     }));
   };
 
-  it('authenticates the app', (done) => {
-
-    // Check async callbacks
-    let checks = 0;
-    const check = () => {
-      if(++checks === 2)
-        done();
-    };
-
+  it('authenticates the app', async () => {
+    
     postspy = (uri, opt, cb) => {
       // Expect a call to get an OAuth token for the app
       if(uri === 'https://api.watsonwork.ibm.com/oauth/token') {
         oauth(uri, opt, cb);
-        check();
         return;
       }
     };
+  
+    try { 
+      // Create the Echo Web app
+      const app = await echo.webapp('testappid', 'testsecret', 'testwsecret');
+      expect(app).to.not.equal(null);
+      expect(app).to.not.equal(undefined);
+    }
+    catch(err) {
+      throw err;
+    }
 
-    // Create the Echo Web app
-    echo.webapp('testappid', 'testsecret', 'testwsecret', (err, app) => {
-      expect(err).to.equal(null);
-      check();
-    });
   });
 
-  it('handles Webhook challenge requests', (done) => {
 
-    // Check async callbacks
-    let checks = 0;
-    const check = () => {
-      if(++checks === 2)
-        done();
-    };
+  it('handles Webhook challenge requests', async () => {
 
     postspy = (uri, opt, cb) => {
       // Expect a call to get an OAuth token for the app
       if(uri === 'https://api.watsonwork.ibm.com/oauth/token') {
         oauth(uri, opt, cb);
-        check();
         return;
       }
     };
-
-    // Create the Echo Web app
-    echo.webapp('testappid', 'testsecret', 'testwsecret', (err, app) => {
-      expect(err).to.equal(null);
+    
+    try {
+      // Create the echo web app
+      const app = await echo.webapp('testappid', 'testsecret', 'testwsecret');
+      expect(app).to.not.equal(null);
+      expect(app).to.not.equal(undefined);
 
       // Listen on an ephemeral port
       const server = app.listen(0);
+      
+      // Post Webhook challenge request to the app
+      const res = await postAsync(
+        'http://localhost:' + server.address().port + '/echo', {
+          headers: {
+            // Signature of the test body with the Webhook secret
+            'X-OUTBOUND-TOKEN':
+              'f51ff5c91e99c63b6fde9e396bb6ea3023727f74f1853f29ab571cfdaaba4c03'
+          },
+          json: true,
+          body: {
+            type: 'verification',
+            challenge: 'testchallenge'
+          }
+        });
 
-      // Post a Webhook challenge request to the app
-      post('http://localhost:' + server.address().port + '/echo', {
-        headers: {
-          // Signature of the test body with the Webhook secret
-          'X-OUTBOUND-TOKEN':
-            'f51ff5c91e99c63b6fde9e396bb6ea3023727f74f1853f29ab571cfdaaba4c03'
-        },
-        json: true,
-        body: {
-          type: 'verification',
-          challenge: 'testchallenge'
-        }
-      }, (err, res) => {
-        expect(err).to.equal(null);
-        expect(res.statusCode).to.equal(200);
-
-        // Expect correct challenge response and signature
-        expect(res.body.response).to.equal('testchallenge');
-        expect(res.headers['x-outbound-token']).to.equal(
-          // Signature of the test body with the Webhook secret
-          '876d1f9de1b36514d30bcf48d8c4731a69500730854a964e31764159d75b88f1');
-
-        check();
-      });
-    });
+      // Check that state of the response
+      expect(res.statusCode).to.equal(200);
+        
+      // Expect correct challenge response and signature
+      expect(res.body.response).to.equal('testchallenge');
+      expect(res.headers['x-outbound-token']).to.equal(
+        // Signature of the test body with the Webhook secret
+        '876d1f9de1b36514d30bcf48d8c4731a69500730854a964e31764159d75b88f1');
+    }
+    catch(err) {
+      throw err;
+    }
+    
   });
 
-  it('Echoes messages back', (done) => {
-
-    // Check async callbacks
-    let checks = 0;
-    const check = () => {
-      if(++checks === 3)
-        done();
-    };
+  it('Echoes messages back', async () => {
 
     postspy = (uri, opt, cb) => {
       // Expect a call to get the OAuth token of an app
       if(uri === 'https://api.watsonwork.ibm.com/oauth/token') {
         oauth(uri, opt, cb);
-        check();
         return;
       }
 
@@ -164,88 +155,88 @@ describe('watsonwork-echo', () => {
           body: {
           }
         }));
-        check();
       }
     };
 
-    // Create the Echo Web app
-    echo.webapp('testappid', 'testsecret', 'testwsecret', (err, app) => {
-      expect(err).to.equal(null);
+    try {
+      // Create the echo web app
+      const app = await echo.webapp('testappid', 'testsecret', 'testwsecret');
+      expect(app).to.not.equal(null);
+      expect(app).to.not.equal(undefined);
 
       // Listen on an ephemeral port
       const server = app.listen(0);
-
+      
       // Post a chat message to the app
-      post('http://localhost:' + server.address().port + '/echo', {
-        headers: {
-          'X-OUTBOUND-TOKEN':
-            // Signature of the body with the Webhook secret
-            '7b36f68c9ef83e62c154d7f5eaad634947f1e92931ac213462f489d7d8f8bcad'
-        },
-        json: true,
-        body: {
-          type: 'message-created',
-          content: 'Hello there',
-          userName: 'Jane',
-          spaceId: 'testspace'
-        }
-      }, (err, val) => {
-        expect(err).to.equal(null);
-        expect(val.statusCode).to.equal(201);
+      const val = await postAsync(
+        'http://localhost:' + server.address().port + '/echo', {
+          headers: {
+            'X-OUTBOUND-TOKEN':
+              // Signature of the body with the Webhook secret
+              '7b36f68c9ef83e62c154d7f5eaad634947f1e92931ac213462f489d7d8f8bcad'
+          },
+          json: true,
+          body: {
+            type: 'message-created',
+            content: 'Hello there',
+            userName: 'Jane',
+            spaceId: 'testspace'
+          }
+        });
 
-        check();
-      });
-    });
+      // check successful response status
+      expect(val.statusCode).to.equal(201);
+    }
+    catch(err) {
+      throw err;
+    }
   });
 
-  it('rejects messages with invalid signature', (done) => {
-
-    // Check async callbacks
-    let checks = 0;
-    const check = () => {
-      if(++checks === 2)
-        done();
-    };
+  it('rejects messages with invalid signature', async () => {
 
     postspy = (uri, opt, cb) => {
       // Expect a call to get an OAuth token for the app
       if(uri === 'https://api.watsonwork.ibm.com/oauth/token') {
         oauth(uri, opt, cb);
-        check();
+        // check();
         return;
       }
     };
 
-    // Create the Echo Web app
-    echo.webapp('testappid', 'testsecret', 'testwsecret', (err, app) => {
-      expect(err).to.equal(null);
-
-      // Listen on an ephemeral port
+    try {
+      // Create the echo web app
+      const app = await echo.webapp('testappid', 'testsecret', 'testwsecret');
+      expect(app).to.not.equal(null);
+      expect(app).to.not.equal(undefined);
+      
+      // create the server on an ephemeral port
       const server = app.listen(0);
+      
+      // Send a request with invalid signature to be rejected
+      const val = await postAsync(
+        'http://localhost:' + server.address().port + '/echo', {
+          headers: {
+            'X-OUTBOUND-TOKEN':
+              // Test an invalid body signature
+              'invalidsignature'
+          },
+          json: true,
+          body: {
+            type: 'message-created',
+            content: 'Hello there',
+            userName: 'Jane',
+            spaceId: 'testspace'
+          }
+        });
 
-      // Post a chat message to the app
-      post('http://localhost:' + server.address().port + '/echo', {
-        headers: {
-          'X-OUTBOUND-TOKEN':
-            // Test an invalid body signature
-            'invalidsignature'
-        },
-        json: true,
-        body: {
-          type: 'message-created',
-          content: 'Hello there',
-          userName: 'Jane',
-          spaceId: 'testspace'
-        }
-      }, (err, val) => {
-        expect(err).to.equal(null);
-
-        // Expect the request to be rejected
-        expect(val.statusCode).to.equal(401);
-
-        check();
-      });
-    });
+      // Expect an invalid status code
+      expect(val.statusCode).to.equal(401);
+    }
+    catch(err) {
+      throw err;
+    }
   });
+
 });
+
 
