@@ -17,7 +17,8 @@ globals:
 
 parserOptions:
   sourceType: "module"
-
+  ecmaVersion: 8
+  
 rules:
   # ERRORS
   space-before-blocks: 2

@@ -11,13 +11,16 @@ import * as https from 'https';
 import * as oauth from './oauth';
 import * as ssl from './ssl';
 import debug from 'debug';
+import Promise from 'bluebird';
 
 // Debug log
 const log = debug('watsonwork-echo-app');
 
+const post = Promise.promisify(request.post);
+
 // Echoes Watson Work chat messages containing 'hello' or 'hey' back
 // to the space they were sent to
-export const echo = (appId, token) => (req, res) => {
+export const echo = (appId, token) => async (req, res) => {
   // Respond to the Webhook right away, as the response message will
   // be sent asynchronously
   res.status(201).end();
@@ -38,52 +41,58 @@ export const echo = (appId, token) => (req, res) => {
     .filter((word) => /^(hello|hey)$/i.test(word)).length)
 
     // Send the echo message
-    send(req.body.spaceId,
+    await send(req.body.spaceId,
       util.format(
         'Hey %s, did you say %s?',
         req.body.userName, req.body.content),
-      token(),
-      (err, res) => {
-        if(!err)
-          log('Sent message to space %s', req.body.spaceId);
-      });
+      token());
+  log('Sent message to space %s', req.body.spaceId);
 };
 
 // Send an app message to the conversation in a space
-const send = (spaceId, text, tok, cb) => {
-  request.post(
-    'https://api.watsonwork.ibm.com/v1/spaces/' + spaceId + '/messages', {
-      headers: {
-        Authorization: 'Bearer ' + tok
-      },
-      json: true,
-      // An App message can specify a color, a title, markdown text and
-      // an 'actor' useful to show where the message is coming from
-      body: {
-        type: 'appMessage',
-        version: 1.0,
-        annotations: [{
-          type: 'generic',
+const send = async (spaceId, text, tok) => {
+  let res;
+  try {
+    res = await post(
+      'https://api.watsonwork.ibm.com/v1/spaces/' + spaceId + '/messages', {
+        headers: {
+          Authorization: 'Bearer ' + tok
+        },
+        json: true,
+        // An App message can specify a color, a title, markdown text and
+        // an 'actor' useful to show where the message is coming from
+        body: {
+          type: 'appMessage',
           version: 1.0,
+          annotations: [{
+            type: 'generic',
+            version: 1.0,
 
-          color: '#6CB7FB',
-          title: 'Echo message',
-          text: text,
+            color: '#6CB7FB',
+            title: 'Echo message',
+            text: text,
 
-          actor: {
-            name: 'Sample echo app'
-          }
-        }]
-      }
-    }, (err, res) => {
-      if(err || res.statusCode !== 201) {
-        log('Error sending message %o', err || res.statusCode);
-        cb(err || new Error(res.statusCode));
-        return;
-      }
+            actor: {
+              name: 'Sample echo app'
+            }
+          }]
+        }
+      });
+    
+    // Handle invalid status response code
+    if (res.statusCode !== 201)
+      throw new Error(res.statusCode);
+    
+    // log the valid response and its body
+    else 
       log('Send result %d, %o', res.statusCode, res.body);
-      cb(null, res.body);
-    });
+  } 
+  catch(err) {
+    // log the error and rethrow it
+    log('Error sending message %o', err);
+    throw err; 
+  } 
+  return res;
 };
 
 // Verify Watson Work request signature
@@ -113,73 +122,64 @@ export const challenge = (wsecret) => (req, res, next) => {
 };
 
 // Create Express Web app
-export const webapp = (appId, secret, wsecret, cb) => {
+export const webapp = async (appId, secret, wsecret) => {
   // Authenticate the app and get an OAuth token
-  oauth.run(appId, secret, (err, token) => {
-    if(err) {
-      cb(err);
-      return;
-    }
+  const token = await oauth.run(appId, secret);
+  // Configure Express route for the app Webhook
+  return express().post('/echo',
 
-    // Return the Express Web app
-    cb(null, express()
+    // Verify Watson Work request signature and parse request body
+    bparser.json({
+      type: '*/*',
+      verify: verify(wsecret)
+    }),
 
-      // Configure Express route for the app Webhook
-      .post('/echo',
+    // Handle Watson Work Webhook challenge requests
+    challenge(wsecret),
 
-        // Verify Watson Work request signature and parse request body
-        bparser.json({
-          type: '*/*',
-          verify: verify(wsecret)
-        }),
-
-        // Handle Watson Work Webhook challenge requests
-        challenge(wsecret),
-
-        // Handle Watson Work messages
-        echo(appId, token)));
-  });
+    // Handle Watson Work messages
+    echo(appId, token));
 };
 
 // App main entry point
-const main = (argv, env, cb) => {
-  // Create Express Web app
-  webapp(
-    env.ECHO_APP_ID, env.ECHO_APP_SECRET,
-    env.ECHO_WEBHOOK_SECRET, (err, app) => {
-      if(err) {
-        cb(err);
-        return;
-      }
+const main = async (argv, env) => {
+  try {
+    // Create Express Web app
+    const app = await webapp(
+      env.ECHO_APP_ID, env.ECHO_APP_SECRET,
+      env.ECHO_WEBHOOK_SECRET); 
+    if(env.PORT) {
+      // In a hosting environment like Bluemix for example, HTTPS is
+      // handled by a reverse proxy in front of the app, just listen
+      // on the configured HTTP port
+      log('HTTP server listening on port %d', env.PORT);
+      http.createServer(app).listen(env.PORT);
+    }
 
-      if(env.PORT) {
-        // In a hosting environment like Bluemix for example, HTTPS is
-        // handled by a reverse proxy in front of the app, just listen
-        // on the configured HTTP port
-        log('HTTP server listening on port %d', env.PORT);
-        http.createServer(app).listen(env.PORT, cb);
-      }
-
-      else
-        // Listen on the configured HTTPS port, default to 443
-        ssl.conf(env, (err, conf) => {
-          if(err) {
-            cb(err);
-            return;
-          }
-          const port = env.SSLPORT || 443;
-          log('HTTPS server listening on port %d', port);
-          https.createServer(conf, app).listen(port, cb);
-        });
-    });
+    else {
+      
+      // Listen on the configured HTTPS port, default to 443
+      const sslConfig = await ssl.conf(env); 
+      const port = env.SSLPORT || 443;
+      log('HTTPS server listening on port %D', port);
+      https.createServer(sslConfig, app).listen(port);
+    }
+  } 
+  catch(err) {
+    throw err;
+  }
 };
 
-if (require.main === module)
-  main(process.argv, process.env, (err) => {
-    if(err) {
+// Run main as IIFE (top level await not supported)
+(async () => {
+  if (require.main === module) 
+    try {
+      await main(process.argv, process.env); 
+      log('App started!'); 
+    } 
+    catch(err) {
       console.log('Error starting app:', err);
-      return;
     }
-    log('App started');
-  });
+})();
+
 

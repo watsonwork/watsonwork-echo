@@ -1,29 +1,32 @@
 // Regularly obtain a fresh OAuth token for the app
-
 import * as request from 'request';
 import * as jsonwebtoken from 'jsonwebtoken';
 import debug from 'debug';
+import Promise from 'bluebird';
 
 // Setup debug log
 const log = debug('watsonwork-echo-oauth');
 
+// Promisify request's post function
+const post = Promise.promisify(request.post);
+
+
 // Obtain an OAuth token for the app, repeat at regular intervals before the
 // token expires. Returns a function that will always return a current
 // valid token.
-export const run = (appId, secret, cb) => {
+export const run = async (appId, secret) => {
   let tok;
 
   // Return the current token
   const current = () => tok;
 
   // Return the time to live of a token
-  const ttl = (tok) =>
+  const ttl = (tok) => 
     Math.max(0, jsonwebtoken.decode(tok).exp * 1000 - Date.now());
-
   // Refresh the token
-  const refresh = (cb) => {
+  const refresh = async () => {
     log('Getting token');
-    request.post('https://api.watsonwork.ibm.com/oauth/token', {
+    const res = await post('https://api.watsonwork.ibm.com/oauth/token', {
       auth: {
         user: appId,
         pass: secret
@@ -32,28 +35,27 @@ export const run = (appId, secret, cb) => {
       form: {
         grant_type: 'client_credentials'
       }
-    }, (err, res) => {
-      if(err || res.statusCode !== 200) {
-        log('Error getting token %o', err || res.statusCode);
-        cb(err || new Error(res.statusCode));
-        return;
-      }
-
-      // Save the fresh token
-      log('Got new token');
-      tok = res.body.access_token;
-
-      // Schedule next refresh a bit before the token expires
-      const t = ttl(tok);
-      log('Token ttl', t);
-      setTimeout(refresh, Math.max(0, t - 60000)).unref();
-
-      // Return a function that'll return the current token
-      cb(undefined, current);
     });
+
+    // check the status code of the result
+    if (res.statusCode !== 200) 
+      throw new Error(res.statusCode);
+    
+    // Save the fresh token
+    log('Got new token');
+    tok = res.body.access_token;
+
+    // Schedule next refresh a bit before the token expires
+    const t = ttl(tok);
+    log('Token ttl', t);
+    setTimeout(refresh, Math.max(0, t - 60000)).unref();
+
+
+    // return the current token
+    return current;
   };
 
   // Obtain initial token
-  setImmediate(() => refresh(cb));
+  return await refresh();
 };
 
